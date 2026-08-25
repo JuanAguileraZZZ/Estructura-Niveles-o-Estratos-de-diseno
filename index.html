@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Estructura: Niveles o Estratos de un Sistema Operativo</title>
+<style>
+  :root{
+    --paper:#F4F5F7;
+    --surface:#FFFFFF;
+    --line:#DCE0E6;
+    --ink-900:#12141A;
+    --ink-700:#3A4150;
+    --ink-400:#6B7280;
+    --indigo:#3457D5;
+    --indigo-soft:#E7ECFB;
+    --indigo-dim:#8FA0E8;
+    --font-display:'Space Grotesk', 'Segoe UI', sans-serif;
+    --font-body:'IBM Plex Sans', Arial, sans-serif;
+    --font-mono:'JetBrains Mono', 'Courier New', monospace;
+  }
+
+  @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap');
+
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{scroll-behavior:smooth;}
+
+  body{
+    background:var(--paper);
+    color:var(--ink-700);
+    font-family:var(--font-body);
+    line-height:1.65;
+    -webkit-font-smoothing:antialiased;
+    background-image:
+      linear-gradient(rgba(58,65,80,0.05) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(58,65,80,0.05) 1px, transparent 1px);
+    background-size:36px 36px;
+  }
+
+  a{color:var(--indigo);}
+  img{max-width:100%; display:block; border-radius:2px;}
+
+  .wrap{
+    max-width:1080px;
+    margin:0 auto;
+    padding:0 32px;
+  }
+
+  code, .mono{font-family:var(--font-mono);}
+
+  /* ---------- NAV ---------- */
+  header.top{
+    padding:26px 0;
+    border-bottom:1px solid var(--line);
+  }
+  .top-inner{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+  }
+  .brand{
+    font-family:var(--font-mono);
+    font-size:12px;
+    letter-spacing:0.1em;
+    text-transform:uppercase;
+    color:var(--ink-400);
+  }
+  .brand span{color:var(--indigo);}
+  nav.top-links{
+    display:flex;
+    gap:26px;
+    font-family:var(--font-mono);
+    font-size:12px;
+  }
+  nav.top-links a{
+    color:var(--ink-400);
+    text-decoration:none;
+    letter-spacing:0.03em;
+  }
+  nav.top-links a:hover{color:var(--indigo);}
+
+  /* ---------- HERO ---------- */
+  .hero{padding:64px 0 48px;}
+  .hero-grid{
+    display:grid;
+    grid-template-columns:1fr 0.85fr;
+    gap:48px;
+    align-items:center;
+  }
+  .eyebrow{
+    font-family:var(--font-mono);
+    font-size:12px;
+    letter-spacing:0.1em;
+    text-transform:uppercase;
+    color:var(--indigo);
+    display:inline-block;
+    margin-bottom:16px;
+  }
+  .hero h1{
+    font-family:var(--font-display);
+    font-weight:700;
+    font-size:clamp(2rem, 3.6vw, 3rem);
+    line-height:1.1;
+    margin-bottom:18px;
+    color:var(--ink-900);
+  }
+  .hero p.lead{
+    color:var(--ink-400);
+    max-width:48ch;
+    font-size:1.02rem;
+  }
+
+  /* Signature: schematic stack diagram */
+  .schematic{
+    border:1px solid var(--line);
+    background:var(--surface);
+    padding:18px;
+    border-radius:6px;
+    box-shadow:0 1px 2px rgba(18,20,26,0.04);
+  }
+  .schematic svg{width:100%; height:auto;}
+  .schematic-caption{
+    font-family:var(--font-mono);
+    font-size:10.5px;
+    color:var(--ink-400);
+    text-align:center;
+    margin-top:10px;
+    letter-spacing:0.03em;
+  }
+
+  /* ---------- SUMMARY ROW ---------- */
+  .summary{
+    padding:12px 0 56px;
+    border-bottom:1px solid var(--line);
+  }
+  .summary-grid{
+    display:grid;
+    grid-template-columns:repeat(4, 1fr);
+    gap:20px;
+  }
+  .summary-card{
+    background:var(--surface);
+    border:1px solid var(--line);
+    padding:18px 16px;
+    border-radius:6px;
+  }
+  .summary-card .addr{
+    font-family:var(--font-mono);
+    font-size:11px;
+    color:var(--indigo);
+    margin-bottom:8px;
+  }
+  .summary-card h3{
+    font-family:var(--font-display);
+    font-size:1rem;
+    color:var(--ink-900);
+    margin-bottom:6px;
+  }
+  .summary-card p{
+    font-size:0.85rem;
+    color:var(--ink-400);
+  }
+
+  /* ---------- LAYER SECTIONS ---------- */
+  .layer{
+    padding:60px 0;
+    border-bottom:1px solid var(--line);
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:48px;
+    align-items:center;
+  }
+  .layer.reverse .media{order:2;}
+  .layer.reverse .text{order:1;}
+
+  .layer .tag{
+    font-family:var(--font-mono);
+    font-size:11px;
+    letter-spacing:0.06em;
+    text-transform:uppercase;
+    color:var(--ink-400);
+    display:flex;
+    align-items:center;
+    gap:10px;
+    margin-bottom:14px;
+  }
+  .layer .tag .ring{
+    width:10px; height:10px;
+    border:2px solid var(--indigo);
+    border-radius:50%;
+    display:inline-block;
+  }
+  .layer h2{
+    font-family:var(--font-display);
+    font-weight:600;
+    font-size:1.7rem;
+    color:var(--ink-900);
+    margin-bottom:6px;
+  }
+  .layer h2 small{
+    display:block;
+    font-family:var(--font-mono);
+    font-size:0.8rem;
+    color:var(--ink-400);
+    font-weight:400;
+    margin-top:4px;
+  }
+  .layer p.desc{
+    color:var(--ink-400);
+    margin:14px 0 16px;
+    max-width:50ch;
+  }
+  .layer ul{
+    list-style:none;
+    display:flex;
+    flex-direction:column;
+    gap:9px;
+  }
+  .layer ul li{
+    font-size:0.92rem;
+    color:var(--ink-700);
+    padding-left:20px;
+    position:relative;
+  }
+  .layer ul li::before{
+    content:"›";
+    position:absolute;
+    left:0; top:-1px;
+    color:var(--indigo);
+    font-family:var(--font-mono);
+  }
+  .layer .media{
+    border:1px solid var(--line);
+    padding:8px;
+    border-radius:6px;
+    background:var(--surface);
+    box-shadow:0 1px 2px rgba(18,20,26,0.04);
+  }
+  .layer .media figcaption{
+    font-family:var(--font-mono);
+    font-size:10.5px;
+    color:var(--ink-400);
+    margin-top:8px;
+    padding:0 4px 4px;
+  }
+
+  /* ---------- CLOSING ---------- */
+  .closing{
+    padding:64px 0 88px;
+    text-align:center;
+  }
+  .closing h2{
+    font-family:var(--font-display);
+    font-weight:600;
+    font-size:1.7rem;
+    color:var(--ink-900);
+    max-width:34ch;
+    margin:0 auto 14px;
+  }
+  .closing p{
+    color:var(--ink-400);
+    max-width:54ch;
+    margin:0 auto;
+  }
+
+  footer.site-footer{
+    padding:26px 0;
+    border-top:1px solid var(--line);
+    font-family:var(--font-mono);
+    font-size:11px;
+    color:var(--ink-400);
+    text-align:center;
+  }
+
+  @media (max-width:840px){
+    .hero-grid{grid-template-columns:1fr; gap:32px;}
+    .summary-grid{grid-template-columns:repeat(2, 1fr);}
+    .layer, .layer.reverse{grid-template-columns:1fr; gap:24px;}
+    .layer.reverse .media{order:1;}
+    .layer.reverse .text{order:2;}
+    nav.top-links{gap:14px;}
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    html{scroll-behavior:auto;}
+  }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap top-inner">
+    <span class="brand">SO<span>::</span>ARQUITECTURA</span>
+    <nav class="top-links">
+      <a href="#capas">Las 4 capas</a>
+      <a href="#sintesis">Síntesis</a>
+    </nav>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="wrap hero-grid">
+    <div>
+      <span class="eyebrow">Arquitectura de sistemas operativos</span>
+      <h1>Un sistema operativo se organiza en niveles de privilegio, no en una sola pieza.</h1>
+      <p class="lead">Del silicio a la aplicación, cada capa expone una interfaz controlada a la que está por encima y oculta la complejidad de la que está por debajo.</p>
+    </div>
+    <div class="schematic">
+      <svg viewBox="0 0 420 300" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Esquema de las cuatro capas de un sistema operativo apiladas verticalmente">
+        <rect x="10" y="230" width="400" height="55" rx="3" fill="none" stroke="#6B7280" stroke-width="1.2"/>
+        <rect x="10" y="168" width="400" height="55" rx="3" fill="none" stroke="#3457D5" stroke-width="1.4"/>
+        <rect x="10" y="106" width="400" height="55" rx="3" fill="none" stroke="#6B7280" stroke-width="1.2"/>
+        <rect x="10" y="44" width="400" height="55" rx="3" fill="none" stroke="#6B7280" stroke-width="1.2"/>
+        <line x1="30" y1="230" x2="30" y2="223" stroke="#6B7280" stroke-width="1" stroke-dasharray="2,2"/>
+        <line x1="30" y1="168" x2="30" y2="161" stroke="#6B7280" stroke-width="1" stroke-dasharray="2,2"/>
+        <line x1="30" y1="106" x2="30" y2="99" stroke="#6B7280" stroke-width="1" stroke-dasharray="2,2"/>
+        <text x="26" y="262" font-family="JetBrains Mono, monospace" font-size="11" fill="#3A4150">0x00 · HARDWARE</text>
+        <text x="26" y="200" font-family="JetBrains Mono, monospace" font-size="11" fill="#3457D5">0x01 · NÚCLEO (KERNEL)</text>
+        <text x="26" y="138" font-family="JetBrains Mono, monospace" font-size="11" fill="#3A4150">0x02 · LLAMADAS AL SISTEMA</text>
+        <text x="26" y="76" font-family="JetBrains Mono, monospace" font-size="11" fill="#3A4150">0x03 · ESPACIO DE USUARIO</text>
+      </svg>
+      <p class="schematic-caption">Corte esquemático — de la base física a las aplicaciones</p>
+    </div>
+  </div>
+</section>
+
+<section class="summary">
+  <div class="wrap">
+    <div class="summary-grid">
+      <div class="summary-card">
+        <div class="addr">RING 3</div>
+        <h3>Sin acceso directo</h3>
+        <p>Las apps solo hablan con el kernel mediante interfaces definidas.</p>
+      </div>
+      <div class="summary-card">
+        <div class="addr">RING 0</div>
+        <h3>Modo privilegiado</h3>
+        <p>El núcleo es el único con acceso irrestricto al hardware.</p>
+      </div>
+      <div class="summary-card">
+        <div class="addr">API</div>
+        <h3>Frontera controlada</h3>
+        <p>Las llamadas al sistema son la única puerta entre capas.</p>
+      </div>
+      <div class="summary-card">
+        <div class="addr">ABSTRACCIÓN</div>
+        <h3>Ocultar complejidad</h3>
+        <p>Cada capa esconde los detalles de la capa inferior.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="capas">
+
+  <div class="wrap layer">
+    <div class="text">
+      <span class="tag"><span class="ring"></span>Capa 00 — Base física</span>
+      <h2>Hardware<small>Procesador, memoria y dispositivos</small></h2>
+      <p class="desc">El estrato más bajo: los componentes físicos sobre los que se ejecuta absolutamente todo lo demás.</p>
+      <ul>
+        <li>CPU — unidad central de procesamiento</li>
+        <li>Memoria RAM y almacenamiento</li>
+        <li>Dispositivos de entrada/salida (E/S)</li>
+      </ul>
+    </div>
+    <figure class="media">
+      <svg viewBox="0 0 680 440" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Ilustración de un chip de procesador sobre una placa con pistas de circuito">
+        <rect x="0" y="0" width="680" height="440" fill="#FFFFFF"/>
+        <g stroke="#DCE0E6" stroke-width="1.5" fill="none">
+          <path d="M60 220 H180 M60 260 H180 M60 300 H180"/>
+          <path d="M500 220 H620 M500 260 H620 M500 300 H620"/>
+          <path d="M300 100 V180 M340 100 V180 M380 100 V180"/>
+          <path d="M300 340 V360 M340 340 V360 M380 340 V360"/>
+        </g>
+        <rect x="180" y="140" width="320" height="200" rx="6" fill="#F4F5F7" stroke="#6B7280" stroke-width="1.5"/>
+        <rect x="220" y="180" width="240" height="120" rx="3" fill="none" stroke="#3457D5" stroke-width="1.5"/>
+        <text x="340" y="248" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="20" fill="#3457D5">CPU</text>
+        <circle cx="60" cy="220" r="4" fill="#6B7280"/>
+        <circle cx="60" cy="260" r="4" fill="#6B7280"/>
+        <circle cx="60" cy="300" r="4" fill="#6B7280"/>
+        <circle cx="620" cy="220" r="4" fill="#6B7280"/>
+        <circle cx="620" cy="260" r="4" fill="#6B7280"/>
+        <circle cx="620" cy="300" r="4" fill="#6B7280"/>
+      </svg>
+      <figcaption>Fig. 00 — Capa física del sistema</figcaption>
+    </figure>
+  </div>
+
+  <div class="wrap layer reverse">
+    <div class="text">
+      <span class="tag"><span class="ring"></span>Capa 01 — Modo privilegiado</span>
+      <h2>Núcleo (Kernel)<small>Ring 0</small></h2>
+      <p class="desc">El núcleo es el único componente con acceso directo al hardware. Administra los recursos que todo lo demás necesita.</p>
+      <ul>
+        <li>Gestión de procesos y planificación (scheduling)</li>
+        <li>Gestión de memoria</li>
+        <li>Controladores de dispositivos (drivers)</li>
+      </ul>
+    </div>
+    <figure class="media">
+      <svg viewBox="0 0 680 440" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Ilustración de un rack de servidores gestionado por el núcleo del sistema">
+        <rect x="0" y="0" width="680" height="440" fill="#FFFFFF"/>
+        <g>
+          <rect x="200" y="90" width="280" height="60" rx="3" fill="#F4F5F7" stroke="#6B7280" stroke-width="1.5"/>
+          <rect x="200" y="160" width="280" height="60" rx="3" fill="#F4F5F7" stroke="#3457D5" stroke-width="1.5"/>
+          <rect x="200" y="230" width="280" height="60" rx="3" fill="#F4F5F7" stroke="#6B7280" stroke-width="1.5"/>
+          <rect x="200" y="300" width="280" height="60" rx="3" fill="#F4F5F7" stroke="#6B7280" stroke-width="1.5"/>
+          <circle cx="220" cy="120" r="5" fill="#6B7280"/>
+          <circle cx="220" cy="190" r="5" fill="#3457D5"/>
+          <circle cx="220" cy="260" r="5" fill="#6B7280"/>
+          <circle cx="220" cy="330" r="5" fill="#6B7280"/>
+          <path d="M250 120 H460 M250 190 H460 M250 260 H460 M250 330 H460" stroke="#DCE0E6" stroke-width="1.5" stroke-dasharray="4,4"/>
+        </g>
+      </svg>
+      <figcaption>Fig. 01 — Gestión de recursos del kernel</figcaption>
+    </figure>
+  </div>
+
+  <div class="wrap layer">
+    <div class="text">
+      <span class="tag"><span class="ring"></span>Capa 02 — Frontera controlada</span>
+      <h2>Llamadas al sistema<small>System calls</small></h2>
+      <p class="desc">La única puerta oficial entre el espacio de usuario y el kernel. Ningún programa toca el hardware sin pasar por aquí.</p>
+      <ul>
+        <li>Interfaz definida kernel–usuario</li>
+        <li>Validación y control de acceso a recursos</li>
+        <li>Ejemplos: <code>open()</code>, <code>read()</code>, <code>fork()</code></li>
+      </ul>
+    </div>
+    <figure class="media">
+      <svg viewBox="0 0 680 440" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Ilustración de una terminal mostrando llamadas al sistema">
+        <rect x="0" y="0" width="680" height="440" fill="#FFFFFF"/>
+        <rect x="90" y="70" width="500" height="300" rx="6" fill="#F4F5F7" stroke="#6B7280" stroke-width="1.5"/>
+        <rect x="90" y="70" width="500" height="34" rx="6" fill="#E9EBEF"/>
+        <circle cx="115" cy="87" r="5" fill="#3457D5"/>
+        <circle cx="135" cy="87" r="5" fill="#6B7280"/>
+        <circle cx="155" cy="87" r="5" fill="#6B7280"/>
+        <g font-family="JetBrains Mono, monospace" font-size="15" fill="#3A4150">
+          <text x="115" y="150">$ open("archivo.txt")</text>
+          <text x="115" y="185" fill="#3457D5">→ syscall #2 · kernel</text>
+          <text x="115" y="220">$ read(fd, buf, 1024)</text>
+          <text x="115" y="255" fill="#3457D5">→ syscall #0 · kernel</text>
+          <text x="115" y="290">$ fork()</text>
+          <text x="115" y="325" fill="#3457D5">→ syscall #57 · kernel</text>
+        </g>
+      </svg>
+      <figcaption>Fig. 02 — Interfaz de llamadas al sistema</figcaption>
+    </figure>
+  </div>
+
+  <div class="wrap layer reverse">
+    <div class="text">
+      <span class="tag"><span class="ring"></span>Capa 03 — Modo no privilegiado</span>
+      <h2>Espacio de usuario<small>Ring 3</small></h2>
+      <p class="desc">Donde corren las aplicaciones. No pueden dañar el sistema directamente: todo pasa por las capas inferiores.</p>
+      <ul>
+        <li>Aplicaciones y utilidades del usuario</li>
+        <li>Bibliotecas del sistema</li>
+        <li>Aislamiento respecto al hardware</li>
+      </ul>
+    </div>
+    <figure class="media">
+      <svg viewBox="0 0 680 440" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Ilustración de un escritorio con varias aplicaciones de usuario abiertas">
+        <rect x="0" y="0" width="680" height="440" fill="#FFFFFF"/>
+        <rect x="80" y="60" width="280" height="190" rx="5" fill="#F4F5F7" stroke="#6B7280" stroke-width="1.5"/>
+        <rect x="80" y="60" width="280" height="26" rx="5" fill="#E9EBEF"/>
+        <rect x="320" y="150" width="280" height="230" rx="5" fill="#F4F5F7" stroke="#3457D5" stroke-width="1.5"/>
+        <rect x="320" y="150" width="280" height="26" rx="5" fill="#E9EBEF"/>
+        <rect x="160" y="300" width="280" height="90" rx="5" fill="#F4F5F7" stroke="#6B7280" stroke-width="1.5"/>
+        <rect x="160" y="300" width="280" height="26" rx="5" fill="#E9EBEF"/>
+        <circle cx="98" cy="73" r="4" fill="#6B7280"/>
+        <circle cx="338" cy="163" r="4" fill="#3457D5"/>
+        <circle cx="178" cy="313" r="4" fill="#6B7280"/>
+        <g stroke="#DCE0E6" stroke-width="1.5">
+          <path d="M105 110 H335"/>
+          <path d="M105 140 H280"/>
+          <path d="M345 200 H575"/>
+          <path d="M345 230 H575"/>
+          <path d="M345 260 H520"/>
+        </g>
+      </svg>
+      <figcaption>Fig. 03 — Aplicaciones de usuario</figcaption>
+    </figure>
+  </div>
+
+</section>
+
+<section id="sintesis" class="closing">
+  <div class="wrap">
+    <h2>Cuatro capas, una sola regla: nadie salta niveles.</h2>
+    <p>Una aplicación nunca toca el hardware directamente, y el kernel nunca conoce los detalles de una aplicación en particular. Esa separación estricta es lo que hace estable a un sistema operativo.</p>
+  </div>
+</section>
+
+<footer class="site-footer">
+  <div class="wrap">
+    Estructura: niveles o estratos de un sistema operativo — material de referencia
+  </div>
+</footer>
+
+</body>
+</html>
